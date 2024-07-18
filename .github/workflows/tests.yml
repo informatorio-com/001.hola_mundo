@@ -42,7 +42,7 @@ jobs:
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"content": "Something in the exercise was wrong! ⚠️\nStatus: `${{ job.status }}` 💥👻 \nAutor: @${{ github.actor }} \nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
-          ${{ env.TEAMS_WEBHOOK_URL_NOT_OK }}
+          ${{ secrets.TEAMS_WEBHOOK_URL_NOT_OK }}
   
   notification:
     runs-on: ubuntu-latest
