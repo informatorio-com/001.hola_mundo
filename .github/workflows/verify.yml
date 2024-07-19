@@ -1,4 +1,4 @@
-name: test-exercise
+name: verify-test-exercise
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,7 +7,7 @@ name: test-exercise
 
 on:
   push:
-    branches: ["master"]
+    branches: ["verify"]
 
 env:
   PYTHON_VERSION: 3.10.1
@@ -15,34 +15,29 @@ env:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/verify'
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '${{ env.PYTHON_VERSION }}'  # Specify the Python version you need
-
+      
       - name: "Install needed libraries"
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/verify'
         shell: bash
         run: |
           python -m pip install --upgrade pip
           pip install -r .github/requirements.txt
       
       - name: "Run tests"
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/verify'
         shell: bash
         run: |
-          pytest .github/tests/
+          pytest .github/verify/tests/
 
       - name: "Notify status of failure job"
         if: ${{ failure() }}
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"content": "Something in the exercise was wrong! ⚠️\nStatus: `${{ job.status }}` 💥👻 \nAutor: @${{ github.actor }} \nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
-          ${{ secrets.TEAMS_WEBHOOK_URL_NOT_OK }}
+          ${{ secrets.VERIFY_WEBHOOK }}
   
   notification:
     runs-on: ubuntu-latest
@@ -52,4 +47,4 @@ jobs:
         run: |
           curl -X POST -H "Content-Type: application/json" \
           -d '{"content": "The tests passed succesfully! 🚀\nStatus: `${{ job.status }}` 🍻✅ \nAutor: @${{ github.actor }} \nLink: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
-          ${{ secrets.TEAMS_WEBHOOK_URL_OK }}
+          ${{ secrets.VERIFY_WEBHOOK }}
