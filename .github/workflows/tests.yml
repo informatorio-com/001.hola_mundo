@@ -19,11 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '${{ env.PYTHON_VERSION }}'  # Specify the Python version you need
-
       - name: "Install needed libraries"
         if: github.ref == 'refs/heads/master'
         shell: bash
